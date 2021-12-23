@@ -1,0 +1,19 @@
+This is how I created a git repository for the BIT04 exercises
+
+Step1: created a new directory in my home folder named: Exercises
+
+Step 2: changed to the Exercises directory
+	performed git init
+
+Step 3: checking for existing SSH key 
+	added the key to ssh-agent
+	added key to github account: gedit ~/.ssh/id_ed25519
+	coppied the content of the file to GitHub settings --> SSH and GPG keys (but it already existed)
+
+Step 4: tested the connection: ssh -T git@github.com
+
+Step 5: on GitHub I created a new repository and named it BIT04_Exercises, added a README file
+
+Step 6: cloned the repository to my local computer: git clone coppied the webadress from github and provided the directory Exercises 
+
+Step 7: I created this file 
