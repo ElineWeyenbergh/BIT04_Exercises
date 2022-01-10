@@ -1,14 +1,23 @@
 #Exercise 3 Normalization
-No normalization:
-	db(patientnr, full name, ward_nr, ward_name, bed_nr, drug_nr, drug_name, description, dosage, method, units, start_date, finish_date)
+UNF:
+	db(patientnr, full name, ward_nr, ward_name, bed_nr, [drug_nr, drug_name, description, dosage, method, units, start_date, finish_date])
 
 1NF:
-	db(*patient_nr, full_name, *ward_nr, ward_name, *drug_nr, drug_name, description, dosage, method, units, *start_date, finish_date)
+	db(*patient_nr*, full_name, ward_nr, ward_name, bed_nr, *drug_nr*, drug_name, description, dosage, method, units, *start_date*, finish_date)
 
 2NF:
-	Patient(*patient_nr, full_name)
-	Ward(*ward_nr, ward_name)
-	Drug(*drug_nr, drug_name, description, dosage, method)
-	db(*patient_nr, *drug_nr, *start_date, units, finish_date)
+	Patient(*patient_nr*, full_name, ward_nr, ward_name, bed_nr)
+	Drug(*drug_nr*, drug_name, description, dosage, method)
+	db(*patient_nr*, *drug_nr*, *start_date*, units, finish_date)
 
 3NF: 
+	Patient(*patient_nr*, full_name, wardn_nr, ward_name)
+	Ward(*ward_nr*, ward_name)
+	Drug(*drug_nr*, drug_name, description, dosage, method)
+	Rest(*patient_nr*, *drug_nr*, *start_date*, units, fisish_date)
+
+BCNF:
+	Patient(*patient_nr*, full_name, wardn_nr, ward_name)
+        Ward(*ward_nr*, ward_name)
+        Drug(*drug_nr*, drug_name, description, dosage, method)
+        Rest(*patient_nr*, *drug_nr*, *start_date*, units, fisish_date)
