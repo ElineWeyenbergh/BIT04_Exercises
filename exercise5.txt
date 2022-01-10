@@ -1,2 +1,66 @@
 #Exercise 5 Mariadb
+#1) List the names and addresses of all guests in London, alphabetically ordered by name.
+MariaDB [vacation]> select guestname, guestaddress from guest where guestaddress rlike"London" order by guestname desc;
++--------------+--------------------+
+| guestname    | guestaddress       |
++--------------+--------------------+
+| Mike Ritchie | 18 Tain St, London |
+| John Kay     | 56 High St, London |
++--------------+--------------------+
+#2) List all double or family rooms with a price below £40.00 per night, cheapest first.
+MariaDB [vacation]> select roomno, type, price from room where type="double" and price < 40.00 or type="family" and price < 40.00 order by price asc;
++--------+--------+-------+
+| roomno | type   | price |
++--------+--------+-------+
+|    801 | double | 15.00 |
+|    601 | double | 29.00 |
+|   1001 | double | 30.00 |
+|   1101 | family | 35.00 |
+|    701 | family | 39.00 |
++--------+--------+-------+
+#3) List the bookings for which no date_to has been specified.
+MariaDB [vacation]> select * from booking where dateto is NULL;
++---------+---------+------------+--------+--------+
+| hotelno | guestno | datefrom   | dateto | roomno |
++---------+---------+------------+--------+--------+
+| ch01    |   10006 | 2022-04-21 | NULL   |   1101 |
+| dc01    |   10003 | 2022-05-20 | NULL   |   1001 |
+| fb01    |   10001 | 2022-05-01 | NULL   |    701 |
++---------+---------+------------+--------+--------+
+#4) What is the average price of a room?
+MariaDB [vacation]> select sum(price) as sum_price, count(price) as count_price, sum(price)/count(price) as average from room;
++-----------+-------------+-----------+
+| sum_price | count_price | average   |
++-----------+-------------+-----------+
+|    428.98 |          12 | 35.748333 |
++-----------+-------------+-----------+
+#5) What is the total revenue per night from all double rooms?
+MariaDB [vacation]> select sum(price) as sum from room where type="double";
++--------+
+| sum    |
++--------+
+| 160.00 |
++--------+
+#6) How many different guests have made bookings for August?
+MariaDB [vacation]> select * from booking where datefrom rlike"%-08-*";
+Empty set (0.000 sec)
+#7) List the price and type of all rooms at the The Tower Hotel
+The Tower Hotel --> hotel
+price & type --> room 
+MariaDB [vacation]> select price, type, hotelname from room join hotel on room.hotelno=hotel.hotelno where hotelname="The Tower Hotel";
++-------+--------+-----------------+
+| price | type   | hotelname       |
++-------+--------+-----------------+
+| 19.00 | single | The Tower Hotel |
+| 29.00 | double | The Tower Hotel |
+| 39.00 | family | The Tower Hotel |
++-------+--------+-----------------+
+#8) List all guests currently staying at the The Tower Hotel.
+MariaDB [vacation]> select * from booking join hotel on booking.hotelno=hotel.hotelno where now() between datefrom and dateto and hotelname="The Tower Hotel";
++---------+---------+------------+------------+--------+---------+-----------------+--------+
+| hotelno | guestno | datefrom   | dateto     | roomno | hotelno | hotelname       | city   |
++---------+---------+------------+------------+--------+---------+-----------------+--------+
+| fb01    |   10002 | 2022-01-04 | 2022-01-29 |    601 | fb01    | The Tower Hotel | London |
++---------+---------+------------+------------+--------+---------+-----------------+--------+
+#9) List the details of all rooms at the The Tower Hotel, including the name of the guest staying in the room, if the room is occupied.
 
