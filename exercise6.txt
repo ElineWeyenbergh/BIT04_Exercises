@@ -101,3 +101,39 @@ MariaDB [college]> select stdFirstName, stdLastName, stdGPA, stdCity, stdState f
 | CANDY        | KENDALL     |   3.50 | TACOMA  | WA       |
 | MARIAH       | DODGE       |   3.60 | SEATTLE | WA       |
 +--------------+-------------+--------+---------+----------+
+#12) List the unique city and state combination in the Faculty table.
+MariaDB [college]> select distinct FacCity, FacState from faculty;
++----------+----------+
+| FacCity  | FacState |
++----------+----------+
+| SEATTLE  | WA       |
+| BOTHELL  | WA       |
+| BELLEVUE | WA       |
++----------+----------+
+#13)List the student name, offering number and grade of students who have a grade >=3.5 in a course offering.
+MariaDB [college]> select stdFirstName, stdLastName, OfferNo, EnrGrade from student join enrollment on enrollment.StdSSN=student.StdSSN where enrollment.EnrGrade >= 3.5;
++--------------+-------------+---------+----------+
+| stdFirstName | stdLastName | OfferNo | EnrGrade |
++--------------+-------------+---------+----------+
+| CANDY        | KENDALL     |    1234 |     3.50 |
+| MARIAH       | DODGE       |    1234 |     3.80 |
+| HOMER        | WELLS       |    4321 |     3.50 |
+| ROBERTO      | MORALES     |    4321 |     3.50 |
+| BOB          | NORBERT     |    5679 |     3.70 |
+| ROBERTO      | MORALES     |    5679 |     3.80 |
+| MARIAH       | DODGE       |    6666 |     3.60 |
+| LUKE         | BRAZZI      |    7777 |     3.70 |
+| BOB          | NORBERT     |    9876 |     3.50 |
+| WILLIAM      | PILGRIM     |    9876 |     4.00 |
++--------------+-------------+---------+----------+
+#14) List the names of students (without duplicates) who have grades >= 3.5 in a course offering.
+select distinct stdFirstname, stdLastname from student join enrollment on enrollment.stdSNN=student.stdSSN where enrollment.EnrGrade >=3.5
+#15) List Bob Norbert's course schedule in spring 2006. For each course, list the offering number, course number, days, location, time and faculty name.
+MariaDB [college]> select offering.OfferNo, offering.CourseNo, OffDays, OffLocation, OffTime, faculty.FacFirstName, faculty.FacLastName from student join enrollment on enrollment.StdSSN=student.StdSSN join offering on offering.OfferNo=enrollment.Offe
++---------+----------+---------+-------------+----------+--------------+-------------+
+| OfferNo | CourseNo | OffDays | OffLocation | OffTime  | FacFirstName | FacLastName |
++---------+----------+---------+-------------+----------+--------------+-------------+
+|    5679 | IS480    | TTH     | BLM412      | 15:30:00 | CRISTOPHER   | COLAN       |
+|    9876 | IS460    | TTH     | BLM307      | 13:30:00 | LEONARD      | FIBON       |
++---------+----------+---------+-------------+----------+--------------+-------------+
+
