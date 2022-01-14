@@ -1,2 +1,103 @@
 #Exercise 6
-
+#1) Retrieve the name, city and grade point average (GPA) of students, greater than or equal to 3.7 ( you can concat student first name and last name to 1 column)
+MariaDB [college]> select stdFirstName, stdCity, stdGPA from student where stdGPA >= 3.7;
++--------------+---------+--------+
+| stdFirstName | stdCity | stdGPA |
++--------------+---------+--------+
+| CRISTOPHER   | SEATTLE |   4.00 |
+| WILLIAM      | BOTHELL |   3.80 |
++--------------+---------+--------+
+#2) List the name and hiring date of faculty hired in 1999 or 2000
+MariaDB [college]> select FacFirstName, FacLastName, FacHireDate from faculty where (FacHireDate >= "1999-01-01") and (FacHireDate <= "2000-12-31");
++--------------+-------------+-------------+
+| FacFirstName | FacLastName | FacHireDate |
++--------------+-------------+-------------+
+| CRISTOPHER   | COLAN       | 1999-03-01  |
+| JULIA        | MILLS       | 2000-03-15  |
++--------------+-------------+-------------+
+#3) List the offer number, course number and faculty Social Security number for course offerings scheduled in fall 2005 or winter 2006
+select OfferNo, CourseNo, FacSSN, OffTerm, OffYear from offering where (OffTerm="FALL" and OffYear="2005") or (OffTerm="WINTER" and OffYear="2006");
++---------+----------+-------------+---------+---------+
+| OfferNo | CourseNo | FacSSN      | OffTerm | OffYear |
++---------+----------+-------------+---------+---------+
+|    1234 | IS320    | 098-76-5432 | FALL    |    2005 |
+|    4321 | IS320    | 098-76-5432 | FALL    |    2005 |
+|    4444 | IS320    | 543-21-0987 | WINTER  |    2006 |
+|    5555 | FIN300   | 765-43-2109 | WINTER  |    2006 |
+|    5678 | IS480    | 987-65-4321 | WINTER  |    2006 |
+|    6666 | FIN450   | 987-65-4321 | WINTER  |    2006 |
++---------+----------+-------------+---------+---------+
+#4) List the offering number, course number, days and time of offerings containing the words 'database' or 'programming' in the course description and taught in spring 2006.(Still have to filter for the correct columns!)
+MariaDB [college]> select * from course join offering on offering.CourseNo=course.CourseNo where crsDesc rlike"DATABASE|PROGRAMMING" and OffTerm="SPRING" and OffYear="2006";
++----------+--------------------------------------+----------+---------+----------+---------+---------+-------------+----------+-------------+---------+
+| CourseNo | crsDesc                              | CrsUnits | OfferNo | CourseNo | OffTerm | OffYear | OffLocation | OffTime  | FacSSN      | OffDays |
++----------+--------------------------------------+----------+---------+----------+---------+---------+-------------+----------+-------------+---------+
+| IS320    | FUNDAMENTALS OF BUSINESS PROGRAMMING |        4 |    3333 | IS320    | SPRING  |    2006 | BLM214      | 08:30:00 | 098-76-5432 | MW      |
+| IS480    | FUNDAMENTALS OF DATABASE MANAGEMENT  |        4 |    5679 | IS480    | SPRING  |    2006 | BLM412      | 15:30:00 | 876-54-3210 | TTH     |
++----------+--------------------------------------+----------+---------+----------+---------+---------+-------------+----------+-------------+---------+
+#5) List the offer number, course number and name of the instructor of IS course offerings scheduled in fall 2005 taught by assistant professors
+MariaDB [college]> select offering.OfferNo, offering.CourseNo, FacFirstName, FacLastName from offering join faculty on offering.FacSSN=faculty.FacSSN where OffTerm="FALL" and OffYear="2005" and CourseNo rlike "^IS" and FacRank="ASST";
++---------+----------+--------------+-------------+
+| OfferNo | CourseNo | FacFirstName | FacLastName |
++---------+----------+--------------+-------------+
+|    1234 | IS320    | LEONARD      | VINCE       |
+|    4321 | IS320    | LEONARD      | VINCE       |
++---------+----------+--------------+-------------+
+#6) Summarize the averageGPA of students by major.
+MariaDB [college]> select stdMajor, avg(stdGPA) from student group by stdMajor ;
++----------+-------------+
+| stdMajor | avg(stdGPA) |
++----------+-------------+
+| ACCT     |    3.400000 |
+| FIN      |    2.800000 |
+| IS       |    3.233333 |
++----------+-------------+
+#7) Summarize the number of offerings and unique courses by year.
+MariaDB [college]> select OffYear, count(OfferNo), count(distinct(CourseNo)) from offering group by OffYear;
++---------+----------------+---------------------------+
+| OffYear | count(OfferNo) | count(distinct(CourseNo)) |
++---------+----------------+---------------------------+
+|    2005 |              3 |                         2 |
+|    2006 |             10 |                         6 |
++---------+----------------+---------------------------+
+#8) Summarize the average GPA of upper-division (junior or senior) students by major.Only list the major with average GPA greater than 3.1.
+MariaDB [college]> select stdMajor, avg(stdGPA) from student where stdClass in ("JR", "SR") group by stdMajor having avg(stdGPA) > 3.1;
++----------+-------------+
+| stdMajor | avg(stdGPA) |
++----------+-------------+
+| ACCT     |    3.500000 |
+| IS       |    3.150000 |
++----------+-------------+
+#9) Summarize the minimum and maximum GPA of students by major and class.
+MariaDB [college]> select stdMajor, stdClass, min(stdGPA), max(stdGPA)  from student group by stdMajor, stdClass;
++----------+----------+-------------+-------------+
+| stdMajor | stdClass | min(stdGPA) | max(stdGPA) |
++----------+----------+-------------+-------------+
+| ACCT     | JR       |        3.50 |        3.50 |
+| ACCT     | SO       |        3.30 |        3.30 |
+| FIN      | JR       |        2.50 |        2.70 |
+| FIN      | SR       |        3.20 |        3.20 |
+| IS       | FR       |        3.00 |        3.00 |
+| IS       | JR       |        3.60 |        3.60 |
+| IS       | SO       |        3.80 |        3.80 |
+| IS       | SR       |        2.20 |        4.00 |
++----------+----------+-------------+-------------+
+#10) Summarize the number of IS course offering by course description
+MariaDB [college]> select crsDesc, count(offering.OfferNo) from course join offering on offering.CourseNo=course.CourseNo where course.CourseNo rlike"^IS" group by crsDesc ;
++--------------------------------------+-------------------------+
+| crsDesc                              | count(offering.OfferNo) |
++--------------------------------------+-------------------------+
+| FUNDAMENTALS OF BUSINESS PROGRAMMING |                       6 |
+| FUNDAMENTALS OF DATABASE MANAGEMENT  |                       2 |
+| SYSTEMS ANALYSIS                     |                       2 |
++--------------------------------------+-------------------------+
+#11) List the GPA, name, city and state of juniors, lowest GPA first
+MariaDB [college]> select stdFirstName, stdLastName, stdGPA, stdCity, stdState from student where stdClass="JR" order by stdGPA ;
++--------------+-------------+--------+---------+----------+
+| stdFirstName | stdLastName | stdGPA | stdCity | stdState |
++--------------+-------------+--------+---------+----------+
+| ROBERTO      | MORALES     |   2.50 | SEATTLE | WA       |
+| BOB          | NORBERT     |   2.70 | BOTHELL | WA       |
+| CANDY        | KENDALL     |   3.50 | TACOMA  | WA       |
+| MARIAH       | DODGE       |   3.60 | SEATTLE | WA       |
++--------------+-------------+--------+---------+----------+
