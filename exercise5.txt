@@ -100,5 +100,36 @@ MariaDB [vacation]> select count(roomno), hotelname, city from hotel join room o
 |             3 | The Tower Hotel | London |
 +---------------+-----------------+--------+
 #14) What is the most booked room type for each hotel in London?
+MariaDB [vacation]> select hotel.hotelname, type from hotel join room on hotel.hotelno=room.hotelno join booking on booking.hotelno=room.hotelno and booking.roomno=room.roomno where hotel.city="London" group by hotelname, type;
++-----------------+--------+
+| hotelname       | type   |
++-----------------+--------+
+| Omni Shoreham   | family |
+| Phoenix Park    | double |
+| The Tower Hotel | double |
+| The Tower Hotel | family |
+| The Tower Hotel | single |
++-----------------+--------+
 #15) Update the price of all rooms by 5%.
+MariaDB [vacation]> update room set price=price *1.05;
+Query OK, 12 rows affected, 2 warnings (0.044 sec)
+Rows matched: 12  Changed: 12  Warnings: 2
+
+MariaDB [vacation]> select * from room;
++--------+---------+--------+-------+
+| roomno | hotelno | type   | price |
++--------+---------+--------+-------+
+|    501 | fb01    | single | 19.95 |
+|    601 | fb01    | double | 30.45 |
+|    701 | ch02    | single | 10.50 |
+|    701 | fb01    | family | 40.95 |
+|    801 | ch02    | double | 15.75 |
+|    901 | dc01    | single | 18.90 |
+|   1001 | ch01    | single | 31.49 |
+|   1001 | dc01    | double | 31.50 |
+|   1001 | fb02    | single | 60.90 |
+|   1101 | ch01    | family | 62.99 |
+|   1101 | dc01    | family | 36.75 |
+|   1101 | fb02    | double | 90.30 |
++--------+---------+--------+-------+
 
